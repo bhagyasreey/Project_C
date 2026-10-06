@@ -1,0 +1,212 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: >
+      Current-state customer dimension containing customer identity,
+      location, segment, KYC and derived age attributes. Grain is one
+      row per customer_id.
+
+    columns:
+      - name: customer_key
+        description: Primary dimension key derived from customer_id.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Business identifier of the customer.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_name
+        description: Full name of the customer.
+
+      - name: customer_segment
+        description: Business segment assigned to the customer.
+
+      - name: age_group
+        description: Derived customer age-band classification.
+
+  - name: dim_account
+    description: >
+      Current-state bank-account dimension. Grain is one row per
+      account_id.
+
+    columns:
+      - name: account_key
+        description: Primary dimension key derived from account_id.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: account_id
+        description: Business identifier of the account.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Customer who owns the account.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+
+      - name: branch_id
+        description: Branch associated with the account.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_branch')
+                field: branch_id
+
+      - name: account_status
+        description: Current standardized status of the account.
+
+  - name: dim_branch
+    description: >
+      Branch dimension containing organizational and geographical
+      attributes. Grain is one row per branch_id.
+
+    columns:
+      - name: branch_key
+        description: Primary dimension key derived from branch_id.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: branch_id
+        description: Business identifier of the branch.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: branch_name
+        description: Business name of the branch.
+
+      - name: region
+        description: Operational region assigned to the branch.
+
+  - name: dim_card
+    description: >
+      Current-state debit and credit card dimension. Grain is one
+      row per card_id.
+
+    columns:
+      - name: card_key
+        description: Primary dimension key derived from card_id.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: card_id
+        description: Business identifier of the card.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: account_id
+        description: Account associated with the card.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_account')
+                field: account_id
+
+      - name: customer_id
+        description: Customer associated with the card.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+
+      - name: card_status
+        description: Current standardized operational status of the card.
+
+  - name: dim_loan
+    description: >
+      Current-state loan dimension enriched with account and branch
+      information. Grain is one row per loan_id.
+
+    columns:
+      - name: loan_key
+        description: Primary dimension key derived from loan_id.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: loan_id
+        description: Business identifier of the loan.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Customer who owns the loan.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+
+      - name: account_id
+        description: Account associated with the loan.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_account')
+                field: account_id
+
+      - name: branch_id
+        description: Branch derived from the associated account.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_branch')
+                field: branch_id
+
+      - name: loan_status
+        description: Current standardized status of the loan.
+
+  - name: dim_date
+    description: >
+      Calendar dimension containing one record per date, including
+      year, quarter, month, week and weekday attributes.
+
+    columns:
+      - name: date_key
+        description: Integer date key in YYYYMMDD format.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: calendar_date
+        description: Calendar date represented by the row.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: calendar_year
+        description: Four-digit calendar year.
+
+      - name: calendar_quarter
+        description: Calendar quarter number from 1 through 4.
+
+      - name: month_number
+        description: Calendar month number from 1 through 12.
+
+      - name: month_name
+        description: Full calendar month name.
+
+      - name: is_weekend
+        description: Indicates whether the date is Saturday or Sunday.

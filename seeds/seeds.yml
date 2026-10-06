@@ -1,0 +1,30 @@
+version: 2
+
+seeds:
+  - name: banking_reference_codes
+    description: >
+      Small version-controlled reference dataset containing BankSphere
+      product codes, product groups and business descriptions.
+
+    config:
+      column_types:
+        product_code: string
+        product_group: string
+        description: string
+
+    columns:
+      - name: product_code
+        description: Unique banking product code.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: product_group
+        description: High-level banking product group.
+        data_tests:
+          - not_null
+
+      - name: description
+        description: Business description of the banking product.
+        data_tests:
+          - not_null

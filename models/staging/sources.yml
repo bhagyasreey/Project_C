@@ -1,0 +1,191 @@
+version: 2
+
+sources:
+  - name: banksphere_raw
+    description: >
+      Raw operational banking data loaded from the BankSphere CSV files.
+      Source values are retained without business transformations.
+
+    database: racko-master-project-505113
+    schema: banksphere_raw
+    loader: csv_upload
+
+    tables:
+      - name: accounts
+        description: One raw record per BankSphere bank account.
+        config:
+          loaded_at_field: updated_at
+          freshness:
+            warn_after:
+              count: 24
+              period: hour
+            error_after:
+              count: 48
+              period: hour
+        columns:
+          - name: account_id
+            description: Unique identifier of the bank account.
+            data_tests:
+              - not_null
+              - unique
+
+          - name: customer_id
+            description: Identifier of the customer who owns the account.
+            data_tests:
+              - not_null
+
+          - name: branch_id
+            description: Identifier of the branch associated with the account.
+            data_tests:
+              - not_null
+
+          - name: account_status
+            description: Operational status of the account.
+
+          - name: updated_at
+            description: Timestamp when the source account record was last updated.
+            data_tests:
+              - not_null
+
+      - name: branches
+        description: One raw record per BankSphere branch.
+        columns:
+          - name: branch_id
+            description: Unique identifier of the branch.
+            data_tests:
+              - not_null
+              - unique
+
+          - name: branch_name
+            description: Business name of the branch.
+
+          - name: updated_at
+            description: Timestamp when the source branch record was last updated.
+
+      - name: cards
+        description: One raw record per debit or credit card.
+        columns:
+          - name: card_id
+            description: Unique identifier of the card.
+            data_tests:
+              - not_null
+              - unique
+
+          - name: account_id
+            description: Identifier of the account linked to the card.
+            data_tests:
+              - not_null
+
+          - name: customer_id
+            description: Identifier of the customer linked to the card.
+            data_tests:
+              - not_null
+
+          - name: card_status
+            description: Operational status of the card.
+
+          - name: updated_at
+            description: Timestamp when the source card record was last updated.
+
+      - name: customers
+        description: One raw record per BankSphere customer.
+        columns:
+          - name: customer_id
+            description: Unique identifier of the customer.
+            data_tests:
+              - not_null
+              - unique
+
+          - name: customer_name
+            description: Full name of the customer.
+
+          - name: customer_segment
+            description: Business segment assigned to the customer.
+
+          - name: updated_at
+            description: Timestamp when the customer record was last updated.
+            data_tests:
+              - not_null
+
+      - name: loan_payments
+        description: One raw record per loan repayment transaction.
+        columns:
+          - name: payment_id
+            description: Unique identifier of the loan payment.
+            data_tests:
+              - not_null
+              - unique
+
+          - name: loan_id
+            description: Identifier of the loan receiving the payment.
+            data_tests:
+              - not_null
+
+          - name: updated_at
+            description: Timestamp when the loan-payment record was last updated.
+
+      - name: loans
+        description: One raw record per BankSphere loan.
+        columns:
+          - name: loan_id
+            description: Unique identifier of the loan.
+            data_tests:
+              - not_null
+              - unique
+
+          - name: customer_id
+            description: Identifier of the customer who owns the loan.
+            data_tests:
+              - not_null
+
+          - name: account_id
+            description: Identifier of the account associated with the loan.
+            data_tests:
+              - not_null
+
+          - name: loan_status
+            description: Current operational status of the loan.
+
+          - name: updated_at
+            description: Timestamp when the loan record was last updated.
+            data_tests:
+              - not_null
+
+      - name: transactions
+        description: One raw record per account transaction.
+        config:
+          loaded_at_field: updated_at
+          freshness:
+            warn_after:
+              count: 12
+              period: hour
+            error_after:
+              count: 24
+              period: hour
+        columns:
+          - name: transaction_id
+            description: Unique identifier of the transaction.
+            data_tests:
+              - not_null
+              - unique
+
+          - name: account_id
+            description: Identifier of the account on which the transaction occurred.
+            data_tests:
+              - not_null
+
+          - name: customer_id
+            description: Customer identifier supplied with the transaction.
+
+          - name: transaction_date
+            description: Business date on which the transaction occurred.
+            data_tests:
+              - not_null
+
+          - name: transaction_status
+            description: Operational processing status of the transaction.
+
+          - name: updated_at
+            description: Timestamp when the transaction record was last updated.
+            data_tests:
+              - not_null

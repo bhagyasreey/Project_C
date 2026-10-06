@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: mart_customer_360
+    description: >
+      Business-facing customer 360 mart combining customer, account,
+      transaction, card and loan measures. Grain is one row per customer.
+
+    columns:
+      - name: customer_id
+        description: Unique customer identifier.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_activity_classification
+        description: Derived classification of current customer activity.
+
+      - name: is_high_value_customer
+        description: Indicates whether the customer meets the configured threshold.
+
+  - name: mart_daily_transactions
+    description: >
+      Daily transaction mart aggregated by date, branch, transaction type,
+      channel, transaction flow and status.
+
+    columns:
+      - name: transaction_date
+        description: Transaction business date.
+        data_tests:
+          - not_null
+
+      - name: transaction_count
+        description: Number of transactions in the aggregation group.
+
+      - name: successful_transaction_value
+        description: Total value of successful transactions.
+
+  - name: mart_branch_performance
+    description: >
+      Branch performance mart combining account, transaction and loan
+      portfolio measures. Grain is one row per branch.
+
+    columns:
+      - name: branch_id
+        description: Unique branch identifier.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: successful_transaction_value
+        description: Total successful transaction value for the branch.
+
+      - name: total_outstanding_amount
+        description: Total loan exposure associated with the branch.
+
+  - name: mart_loan_portfolio
+    description: >
+      Loan portfolio mart aggregated by branch, loan type and loan status.
+
+    columns:
+      - name: branch_id
+        description: Branch associated with the loan portfolio.
+
+      - name: loan_type
+        description: Type of loan represented by the row.
+
+      - name: loan_status
+        description: Current loan status represented by the row.
+
+      - name: total_outstanding_amount
+        description: Total unpaid loan exposure.
+
+      - name: repayment_success_rate
+        description: Successful payment count divided by total payment count.
+
+      - name: payment_failure_rate
+        description: Failed payment count divided by total payment count.
+
+  - name: mart_customer_profitability
+    description: >
+      Customer-level estimated revenue mart. This is not full accounting
+      profitability because operating costs and cost-of-funds data are
+      unavailable. Grain is one row per customer.
+
+    columns:
+      - name: customer_id
+        description: Unique customer identifier.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: transaction_fee_revenue
+        description: Revenue represented by successful FEE and CHARGE transactions.
+
+      - name: loan_interest_revenue
+        description: Successful customer loan interest payments.
+
+      - name: estimated_customer_revenue
+        description: Sum of transaction-fee and loan-interest revenue.

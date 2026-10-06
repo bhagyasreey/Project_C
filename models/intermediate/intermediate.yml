@@ -1,0 +1,117 @@
+version: 2
+
+models:
+  - name: int_transaction_classification
+    description: >
+      Ephemeral reusable transformation that classifies transactions by
+      flow, channel group, success status and configurable high-value
+      threshold.
+
+    columns:
+      - name: transaction_id
+        description: Unique transaction identifier.
+
+      - name: transaction_flow
+        description: Transaction classification as INFLOW, OUTFLOW or OTHER.
+
+      - name: channel_group
+        description: Consolidated channel classification.
+
+      - name: is_high_value_transaction
+        description: >
+          Indicates whether the transaction meets the configured
+          high-value transaction threshold.
+
+  - name: int_account_transactions
+    description: >
+      Transaction-grain dataset enriched with account, customer and branch
+      attributes. Grain is one row per transaction_id.
+
+    columns:
+      - name: transaction_id
+        description: Unique identifier of the transaction.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: account_id
+        description: Account associated with the transaction.
+        data_tests:
+          - not_null
+
+      - name: customer_id
+        description: Authoritative customer identifier from the account.
+
+      - name: transaction_customer_id
+        description: Customer identifier originally provided by the transaction.
+
+      - name: branch_id
+        description: Branch associated with the transaction account.
+
+      - name: has_valid_account
+        description: Indicates whether the transaction matched a valid account.
+
+      - name: is_customer_account_match
+        description: >
+          Indicates whether the transaction customer agrees with the
+          customer assigned to the account.
+
+  - name: int_customer_activity
+    description: >
+      Customer-grain activity summary combining accounts, transactions,
+      cards and loans. Grain is one row per customer_id.
+
+    columns:
+      - name: customer_id
+        description: Unique identifier of the customer.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: total_account_count
+        description: Number of accounts belonging to the customer.
+
+      - name: successful_transaction_value
+        description: Total value of successful customer transactions.
+
+      - name: last_successful_transaction_date
+        description: Most recent date of a successful customer transaction.
+
+      - name: is_high_value_customer
+        description: >
+          Indicates whether successful transaction value meets the
+          configured high-value threshold.
+
+  - name: int_loan_summary
+    description: >
+      Loan-grain summary combining loan attributes, account and branch
+      information, and aggregated repayment activity. Grain is one row
+      per loan_id.
+
+    columns:
+      - name: loan_id
+        description: Unique identifier of the loan.
+        data_tests:
+          - not_null
+          - unique
+
+      - name: customer_id
+        description: Customer who owns the loan.
+        data_tests:
+          - not_null
+
+      - name: account_id
+        description: Account associated with the loan.
+        data_tests:
+          - not_null
+
+      - name: outstanding_amount
+        description: Current unpaid amount of the loan.
+
+      - name: successful_payment_amount
+        description: Total value of successful loan payments.
+
+      - name: is_outstanding_within_sanctioned_amount
+        description: >
+          Indicates whether the outstanding loan amount is less than or
+          equal to the sanctioned amount.

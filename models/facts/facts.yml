@@ -1,0 +1,51 @@
+version: 2
+
+models:
+   - name: fact_transactions
+     columns:
+      - name: transaction_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: account_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_account')
+                field: account_id
+
+      - name: customer_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+
+      - name: branch_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_branch')
+                field: branch_id
+
+      - name: transaction_date_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+   - name: fact_loan_payments
+     columns:
+      - name: payment_id
+        data_tests:
+          - not_null
+          - unique
+
+      - name: loan_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_loan')
+                field: loan_id

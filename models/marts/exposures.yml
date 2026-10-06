@@ -1,0 +1,35 @@
+version: 2
+
+exposures:
+  - name: banksphere_executive_banking_dashboard
+    label: BankSphere Executive Banking Dashboard
+
+    type: dashboard
+    maturity: high
+
+    url: https://bi.banksphere.example/executive-banking-dashboard
+
+    description: >
+      Executive banking dashboard providing trusted customer, transaction,
+      branch, loan portfolio and estimated customer revenue analytics.
+      The dashboard is intended for executive and senior business users
+      monitoring banking activity, customer engagement, branch performance,
+      loan exposure, repayment performance and revenue indicators.
+
+    depends_on:
+      - ref('mart_customer_360')
+      - ref('mart_daily_transactions')
+      - ref('mart_branch_performance')
+      - ref('mart_loan_portfolio')
+      - ref('mart_customer_profitability')
+
+    owner:
+      name: Bhagyasree Yadlapalli
+      email: bhagyasree.yadlapalli@example.com
+
+    config:
+      tags:
+        - executive
+        - dashboard
+        - banking
+        - production

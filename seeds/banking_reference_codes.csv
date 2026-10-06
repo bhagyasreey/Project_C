@@ -1,0 +1,11 @@
+product_code,product_group,description
+SAVINGS,DEPOSIT_ACCOUNT,Retail banking deposit account
+CURRENT,TRANSACTION_ACCOUNT,Business/current account
+SALARY,DEPOSIT_ACCOUNT,Salary-linked account
+NRE,NRI_ACCOUNT,Non-resident external account
+NRO,NRI_ACCOUNT,Non-resident ordinary account
+HOME,SECURED_LOAN,Home loan
+PERSONAL,UNSECURED_LOAN,Personal loan
+AUTO,SECURED_LOAN,Auto loan
+EDUCATION,UNSECURED_LOAN,Education loan
+BUSINESS,COMMERCIAL_LOAN,Business loan
